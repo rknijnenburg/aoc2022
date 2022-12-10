@@ -12,13 +12,14 @@ void Execute(Func<string> f)
     Console.Out.WriteLine();
 }
 
-Execute(Aoc2022.Day1.CalorieCounting.Solve);
-Execute(Aoc2022.Day2.RockPaperScissors.Solve);
-Execute(Aoc2022.Day3.RucksackReorganization.Solve);
-Execute(Aoc2022.Day4.CampCleanup.Solve);
-Execute(Aoc2022.Day5.SupplyStacks.Solve);
-Execute(Aoc2022.Day6.TuningTrouble.Solve);
-Execute(Aoc2022.Day7.NoSpaceLeftOnDevice.Solve);
+Execute(Aoc2022.Day01.CalorieCounting.Solve);
+Execute(Aoc2022.Day02.RockPaperScissors.Solve);
+Execute(Aoc2022.Day03.RucksackReorganization.Solve);
+Execute(Aoc2022.Day04.CampCleanup.Solve);
+Execute(Aoc2022.Day05.SupplyStacks.Solve);
+Execute(Aoc2022.Day06.TuningTrouble.Solve);
+Execute(Aoc2022.Day07.NoSpaceLeftOnDevice.Solve);
+Execute(Aoc2022.Day09.RopeBridge.Solve);
 
 Console.ReadKey();
 
