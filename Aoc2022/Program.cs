@@ -19,6 +19,7 @@ Execute(Aoc2022.Day4.CampCleanup.Solve);
 Execute(Aoc2022.Day5.SupplyStacks.Solve);
 Execute(Aoc2022.Day6.TuningTrouble.Solve);
 Execute(Aoc2022.Day7.NoSpaceLeftOnDevice.Solve);
+Execute(Aoc2022.Day8.TreetopTreeHouse.Solve);
 
 Console.ReadKey();
 
