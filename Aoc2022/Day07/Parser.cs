@@ -2,9 +2,12 @@
 {
     internal class Parser
     {
-        private string[]? input = null;
+        private readonly string[] input;
 
-        private IEnumerable<string> Input => input ??= System.IO.File.ReadAllLines("Day07/input.txt");
+        public Parser()
+        {
+            input = System.IO.File.ReadAllLines("Day07/input.txt");
+        }
 
         public Directory Parse()
         {
@@ -12,7 +15,7 @@
             var current = result;
             var command = string.Empty;
 
-            foreach (string line in Input)
+            foreach (string line in input)
             {
                 if (string.IsNullOrWhiteSpace(line))
                     continue;

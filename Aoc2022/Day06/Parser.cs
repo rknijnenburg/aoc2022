@@ -2,13 +2,17 @@
 {
     internal class Parser
     {
-        private string? input = null;
+        private readonly string input;
 
-        private string Input => input ??= File.ReadAllText("Day06/input.txt");
+        public Parser()
+        {
+            input ??= File.ReadAllText("Day06/input.txt");
+        }
+        
         
         public string Parse()
         {
-            return Input;
+            return input;
         }
 
 

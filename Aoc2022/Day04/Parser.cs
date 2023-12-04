@@ -2,14 +2,18 @@
 {
     internal class Parser
     {
-        private string[]? input = null;
-        private IEnumerable<string> Input => input ??= File.ReadAllLines("Day04/input.txt");
+        private readonly string[] input;
+        
+        public Parser()
+        {
+            input = File.ReadAllLines("Day04/input.txt");
+        }
 
         public IEnumerable<Pair> Parse()
         {
             var result = new List<Pair>();
 
-            foreach (var line in Input)
+            foreach (var line in input)
                 if (!string.IsNullOrWhiteSpace(line))
                     result.Add(ParsePair(line));
 
@@ -21,7 +25,7 @@
             var slices = line.Split(',');
             
             return new Pair(ParseRange(slices[0]), ParseRange(slices[1]));
-    }
+        }
 
         private Pair.Range ParseRange(string slice)
         {

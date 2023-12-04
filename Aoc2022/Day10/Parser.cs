@@ -9,12 +9,18 @@ namespace Aoc2022.Day10
 {
     internal class Parser
     {
-        private string[]? input = null;
-        private IEnumerable<string> Input => input ??= System.IO.File.ReadAllLines("Day10/input.txt");
+        private readonly string[] input;
+
+        public Parser()
+        {
+            input = File.ReadAllLines("Day10/input.txt")
+                .Select(e => e.Trim())
+                .ToArray();
+        }
         
         public IEnumerable<string> Parse()
         {
-            return Input;
+            return input;
         }
     }
 }

@@ -2,15 +2,18 @@
 {
     internal class Parser
     {
-        private string[]? input;
-        private IEnumerable<string> Input => input ??= File.ReadAllLines("Day01/input.txt");
-
+        private readonly string[] input;
+        
+        public Parser()
+        {
+            input = File.ReadAllLines("Day01/input.txt");
+    }
         public IEnumerable<Elf> Parse()
         {
             var result = new List<Elf>();
             var current = new Elf();
 
-            foreach (var line in Input)
+            foreach (var line in input)
             {
                 if (string.IsNullOrWhiteSpace(line))
                 {

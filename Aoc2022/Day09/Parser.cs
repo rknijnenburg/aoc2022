@@ -2,7 +2,7 @@
 {
     internal class Parser
     {
-        private string[]? input = null;
+        private readonly string[] input;
 
         private static readonly Dictionary<char, Direction> directions = new()
         {
@@ -12,13 +12,16 @@
             { 'D', Direction.Down }
         };
 
-        private string[] Input => input ??= System.IO.File.ReadAllLines("Day09/input.txt");
-
+        public Parser()
+        {
+            input = System.IO.File.ReadAllLines("Day09/input.txt");
+        }
+        
         public IEnumerable<Step> Parse()
         {
             var result = new List<Step>();
 
-            foreach (string line in Input)
+            foreach (string line in input)
             {
                 var slices = line.Split(" ");
                 var direction = directions[slices[0].Trim()[0]];

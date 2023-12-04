@@ -2,15 +2,18 @@
 {
     internal class Parser
     {
-        private string[]? input = null;
+        private readonly string[] input ;
 
-        private  IEnumerable<string> Input => input ??= File.ReadAllLines("Day03/input.txt");
+        public Parser()
+        {
+            input = File.ReadAllLines("Day03/input.txt");
+        }
         
         public IEnumerable<Rucksack> Parse()
         {
             List<Rucksack> result = new List<Rucksack>();
 
-            foreach (var line in Input)
+            foreach (var line in input)
                 if (!string.IsNullOrWhiteSpace(line))
                     result.Add(new Rucksack(line));
 

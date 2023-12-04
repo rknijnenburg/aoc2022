@@ -2,15 +2,18 @@
 {
     internal class Parser
     {
-        private string[]? input;
+        private readonly string[] input;
 
-        private IEnumerable<string> Input => input ??= File.ReadAllLines("Day02/input.txt");
-
+        public Parser()
+        {
+            input = File.ReadAllLines("Day02/input.txt");
+        }
+        
         public IEnumerable<ResponseRound> ParseResponseRounds()
         {
             var result = new List<ResponseRound>();
             
-            foreach (var line in Input)
+            foreach (var line in input)
                 if (!string.IsNullOrWhiteSpace(line))
                     result.Add(ParseResponseRound(line));
 
@@ -21,7 +24,7 @@
         {
             var result = new List<ResultRound>();
 
-            foreach (var line in Input)
+            foreach (var line in input)
                 if (!string.IsNullOrWhiteSpace(line))
                     result.Add(ParseResultRound(line));
 

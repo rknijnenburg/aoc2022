@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
-namespace Aoc2022.Day8
+namespace Aoc2022.Day08
 {
     internal static class TreetopTreeHouse
     {
