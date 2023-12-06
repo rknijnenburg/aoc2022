@@ -7,31 +7,32 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Aoc2022.Day12
 {
-    internal static class HillClimbingAlgorithm
+    internal class HillClimbingAlgorithm: IProblem
     {
-        public static string Solve()
+        public string Name => "Hill Climbing Algorithm";
+        public int Day => 12;
+
+        private readonly string[] input;
+
+        public HillClimbingAlgorithm()
         {
-            var builder = new StringBuilder();
-
-            builder.AppendLine("Day 12: Hill Climbing Algorithm");
-            builder.AppendLine();
-
-            var parser = new Parser();
-
-            builder.AppendLine("What is the fewest steps required to move from your current position to the location that should get the best signal?");
-            builder.AppendLine($"{GetShortestPath(parser, 'S')}");
-            builder.AppendLine();
-
-            builder.AppendLine("What is the fewest steps required to move starting from any square with elevation a to the location that should get the best signal?");
-            builder.AppendLine($"{GetShortestPath(parser, 'a')}");
-            builder.AppendLine();
-
-            return builder.ToString();
+            input = File.ReadAllLines("Day12/input.txt");
         }
 
-        private static int GetShortestPath(Parser parser, char finish)
+        public string SolvePart1()
         {
-            var squares = parser.Parse().SelectMany(e => e).ToList();
+            return GetShortestPath('S').ToString();
+    }
+
+        public string SolvePart2()
+        {
+            return GetShortestPath('a').ToString();
+        }
+
+        private int GetShortestPath(char finish)
+        {
+            var grid = BuildGrid();
+            var squares = grid.SelectMany(e => e).ToList();
             var first = squares.Single(e => e.Value == 'E');
             first.Distance = 0;
 
@@ -39,7 +40,7 @@ namespace Aoc2022.Day12
             queue.Enqueue(first);
 
             var last = squares.Where(e => e.Value == finish);
-            
+
             while (queue.Count > 0)
             {
                 var current = queue.Dequeue();
@@ -60,5 +61,26 @@ namespace Aoc2022.Day12
             return last.Where(e => e.Distance != null).Min(e => e.Distance) ?? throw new Exception("Finish should have a distance");
         }
 
+        private Square[][] BuildGrid()
+        {
+            var grid = new Square[input.Length][];
+
+            for (int r = 0; r < input.Length; r++)
+            {
+                grid[r] = new Square[input[r].Length];
+
+                for (int c = 0; c < input[r].Length; c++)
+                {
+                    var value = input[r][c];
+                    var top = r > 0 ? grid[r - 1][c] : null;
+                    var left = c > 0 ? grid[r][c - 1] : null;
+
+                    grid[r][c] = new Square(left, top, value);
+                }
+            }
+
+            return grid;
+
+        }
     }
 }

@@ -3,30 +3,38 @@ using System.Text;
 
 namespace Aoc2022.Day09
 {
-    internal static class RopeBridge
+    internal class RopeBridge: IProblem
     {
-        public static string Solve()
+        public string Name => "Rope Bridge";
+        public int Day => 9;
+
+        private readonly List<Step> steps = new();
+
+        
+
+        public RopeBridge()
         {
-            var builder = new StringBuilder();
+            var input = File.ReadAllLines("Day09/input.txt");
 
-            builder.AppendLine("Day 9: Rope Bridge");
-            builder.AppendLine();
-
-            var parser = new Parser();
-            var steps = parser.Parse().ToList();
-            
-            builder.AppendLine("How many positions does the tail of the rope visit at least once? (Length 2)");
-            builder.AppendLine($"{GetTailPositions(steps, 2).Count()}");
-            builder.AppendLine();
-
-            builder.AppendLine("How many positions does the tail of the rope visit at least once? (Length 10)");
-            builder.AppendLine($"{GetTailPositions(steps, 10).Count()}");
-            builder.AppendLine();
-
-            return builder.ToString();
+            foreach (string line in input)
+                steps.Add(new Step(line));
         }
 
-        private static IEnumerable<Point> GetTailPositions(IEnumerable<Step> steps, int size)
+        public string SolvePart1()
+        {
+            return GetTailPositions(steps, 2)
+                .Count()
+                .ToString();
+        }
+
+        public string SolvePart2()
+        {
+            return GetTailPositions(steps, 10)
+                .Count()
+                .ToString();
+        }
+
+        private IEnumerable<Point> GetTailPositions(IEnumerable<Step> steps, int size)
         {
             Point[] rope = Enumerable.Repeat(new Point(0, 0), size).ToArray();
 
@@ -44,10 +52,10 @@ namespace Aoc2022.Day09
             return positions;
         }
 
-        private static void Move(Point[] rope, Direction direction)
+        private void Move(Point[] rope, Direction direction)
         {
             rope[0] = Update(rope[0], direction);
-            
+
             for (var i = 1; i < rope.Length; i++)
             {
                 var dx = rope[i - 1].X - rope[i].X;
@@ -55,13 +63,13 @@ namespace Aoc2022.Day09
 
                 if (Math.Abs(dx) == 2 || Math.Abs(dy) == 2)
                 {
-                    rope[i].X += Math.Min(1, Math.Max(dx, -1)); 
-                    rope[i].Y += Math.Min(1, Math.Max(dy, -1)); 
+                    rope[i].X += Math.Min(1, Math.Max(dx, -1));
+                    rope[i].Y += Math.Min(1, Math.Max(dy, -1));
                 }
             }
         }
 
-        private static Point Update(Point point, Direction direction)
+        private Point Update(Point point, Direction direction)
         {
             switch (direction)
             {
@@ -81,6 +89,5 @@ namespace Aoc2022.Day09
 
             return point;
         }
-
     }
 }

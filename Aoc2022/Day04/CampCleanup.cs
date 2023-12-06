@@ -2,30 +2,33 @@
 
 namespace Aoc2022.Day04
 {
-    internal static class CampCleanup
+    internal class CampCleanup: IProblem
     {
-        public static string Solve()
+        public string Name => "Camp Cleanup";
+        public int Day => 4;
+
+        private readonly List<Pair> pairs = new();
+        
+        public CampCleanup()
         {
-            StringBuilder builder = new StringBuilder();
+            var input = File.ReadAllLines("Day04/input.txt");
 
-            builder.AppendLine("Day 4: Camp Cleanup");
-            builder.AppendLine();
+            foreach (var line in input)
+                if (!string.IsNullOrWhiteSpace(line))
+                    pairs.Add(new Pair(line));
+        }
+        public string SolvePart1()
+        {
+            return pairs
+                .Count(e => e.Covers())
+                .ToString();
+        }
 
-            Parser parser = new Parser();
-
-            var pairs = parser
-                .Parse()
-                .ToList();
-
-            builder.AppendLine("In how many assignment pairs does one range fully contain the other?");
-            builder.AppendLine($"{pairs.Count(e => e.Covers())}");
-            builder.AppendLine();
-
-            builder.AppendLine("In how many assignment pairs do the ranges overlap?");
-            builder.AppendLine($"{pairs.Count(e => e.Overlaps())}");
-            builder.AppendLine();
-            
-            return builder.ToString();
+        public string SolvePart2()
+        {
+            return pairs
+                .Count(e => e.Overlaps())
+                .ToString();
         }
     }
 }

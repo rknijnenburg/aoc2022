@@ -6,31 +6,38 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using Aoc2022.Day02;
 using Aoc2022.Day04;
 using Aoc2022.Day07;
 
 namespace Aoc2022.Day13
 {
-    internal static class DistressSignal
+    internal class DistressSignal: IProblem
     {
-        public static string Solve()
+        public string Name => "Distress Signal";
+        public int Day => 13;
+
+        private readonly List<JsonArray> packets = new();
+
+        public DistressSignal()
         {
-            var builder = new StringBuilder();
+            var input = File.ReadAllLines("Day13/input.txt");
 
-            builder.AppendLine("Day 13: Distress Signal");
-            builder.AppendLine();
+            foreach (var line in input)
+                if (!string.IsNullOrEmpty(line))
+                    packets.Add((JsonArray)(JsonNode.Parse(line) ?? new JsonArray()));
+        }
 
-            var packets = new Parser().Parse().ToList();
-            
-            builder.AppendLine("Determine which pairs of packets are already in the right order. What is the sum of the indices of those pairs?");
-            builder.AppendLine($"{GetSumIndicesCorrectPairs(packets)}");
-            builder.AppendLine();
+        public string SolvePart1()
+        {
+            return GetSumIndicesCorrectPairs(packets)
+                .ToString();
+    }
 
-            builder.AppendLine("Organize all of the packets into the correct order. What is the decoder key for the distress signal?");
-            builder.AppendLine($"{GetDecoderKey(packets)}");
-
-
-            return builder.ToString();
+        public string SolvePart2()
+        {
+            return GetDecoderKey(packets)
+                .ToString();
         }
 
         private static int GetSumIndicesCorrectPairs(IEnumerable<JsonArray> packets)
@@ -47,7 +54,7 @@ namespace Aoc2022.Day13
             return sum;
         }
 
-        private static int GetDecoderKey(List<JsonArray> packets)
+        private int GetDecoderKey(List<JsonArray> packets)
         {
             var div1 = (JsonArray)JsonArray.Parse("[[2]]");
             var div2 = (JsonArray)JsonArray.Parse("[[6]]");
@@ -90,7 +97,7 @@ namespace Aoc2022.Day13
             return 0;
         }
 
-        
+
 
     }
 }

@@ -1,42 +1,104 @@
-﻿using System.Text;
+﻿using Aoc2022.Day08;
+using System.Text;
 
 namespace Aoc2022.Day07
 {
-    internal static class NoSpaceLeftOnDevice
+    internal class NoSpaceLeftOnDevice: IProblem
     {
-        public static string Solve()
+        public string Name => "No Space Left On Device";
+        public int Day => 7;
+
+        private readonly DirectoryInfo root;
+
+        public NoSpaceLeftOnDevice()
         {
-            StringBuilder builder = new StringBuilder();
+            var input = File.ReadAllLines("Day07/input.txt");
 
-            builder.AppendLine("Day 7: No Space Left On Device");
-            builder.AppendLine();
+            root = new DirectoryInfo("/", null);
+            var current = root;
+            var command = string.Empty;
 
-            var parser = new Parser();
-            var root = parser.Parse();
+            foreach (string line in input)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
 
-            builder.AppendLine("Find all of the directories with a total size of at most 100000. What is the sum of the total sizes of those directories?");
-            builder.AppendLine($"{FindDirectoriesWithSizeLessOrEqual(root, 100000).Sum(e => e.Size)}");
-            builder.AppendLine();
+                if (line.StartsWith("$"))
+                {
+                    command = line.Substring(2);
 
-            var free = 30000000 - (70000000 - root.Size);
+                    if (command.StartsWith("cd"))
+                    {
+                        string name = command.Substring(3);
 
-            builder.AppendLine("Find the smallest directory that, if deleted, would free up enough space on the filesystem to run the update. What is the total size of that directory?");
-            builder.AppendLine($"{FindSmallestDirectoryWithSizeGreaterOrEqual(root, free).Size}");
-            builder.AppendLine();
+                        if (name == "/")
+                        {
+                            current = root;
+                            continue;
+                        }
 
-            return builder.ToString();
+                        if (name == "..")
+                        {
+                            current = current.Parent ?? throw new Exception("No parent");
+                            continue;
+                        }
+
+                        current = current.GetDirectory(name);
+                        continue;
+                    }
+
+                    if (command.StartsWith("ls"))
+                        continue;
+
+                    throw new Exception($"Unhandled command {command}");
+                }
+
+                if (command.StartsWith("ls"))
+                {
+                    if (line.StartsWith("dir"))
+                    {
+                        current.AddDirectory(line.Substring(4));
+
+                        continue;
+                    }
+
+                    var split = line.Split(" ");
+
+                    current.AddFile(split[1], Convert.ToInt32(split[0]));
+
+                    continue;
+                }
+
+                throw new Exception($"Unhandled output {command}");
+            }
         }
 
-        private static IEnumerable<Directory> FindDirectoriesWithSizeLessOrEqual(Directory root, int size)
+        public string SolvePart1()
         {
-            var result = new List<Directory>();
+            return FindDirectoriesWithSizeLessOrEqual(root, 100000)
+                .Sum(e => e.Size)
+                .ToString();
+        }
+
+        public string SolvePart2()
+        {
+            var free = 30000000 - (70000000 - root.Size);
+
+            return FindSmallestDirectoryWithSizeGreaterOrEqual(root, free)
+                .Size
+                .ToString();
+        }
+
+        private IEnumerable<DirectoryInfo> FindDirectoriesWithSizeLessOrEqual(DirectoryInfo root, int size)
+        {
+            var result = new List<DirectoryInfo>();
 
             foreach (var top in root.Directories)
             {
-                var queue = new Queue<Directory>();
-                
+                var queue = new Queue<DirectoryInfo>();
+
                 queue.Enqueue(top);
-                
+
                 while (queue.Count > 0)
                 {
                     var current = queue.Dequeue();
@@ -52,20 +114,20 @@ namespace Aoc2022.Day07
             return result;
         }
 
-        private static Directory FindSmallestDirectoryWithSizeGreaterOrEqual(Directory root, int size)
+        private DirectoryInfo FindSmallestDirectoryWithSizeGreaterOrEqual(DirectoryInfo root, int size)
         {
-            Directory result = root;
+            DirectoryInfo result = root;
 
             foreach (var top in root.Directories)
             {
-                var queue = new Queue<Directory>();
+                var queue = new Queue<DirectoryInfo>();
 
                 queue.Enqueue(top);
 
                 while (queue.Count > 0)
                 {
                     var current = queue.Dequeue();
-                    
+
                     if (current.Size < size)
                         continue;
 

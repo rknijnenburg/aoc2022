@@ -5,10 +5,20 @@
         public Direction Direction { get; }
         public int Amount { get; }
 
-        public Step(Direction direction, int amount)
+        private static readonly Dictionary<char, Direction> directions = new()
         {
-            Direction = direction;
-            Amount = amount;
+            { 'L', Direction.Left },
+            { 'U', Direction.Up },
+            { 'R', Direction.Right },
+            { 'D', Direction.Down }
+        };
+
+        public Step(string line)
+        {
+            var slices = line.Split(" ");
+
+            Direction = directions[slices[0].Trim()[0]];
+            Amount = Convert.ToInt32(slices[1]);
         }
     }
 }

@@ -9,28 +9,53 @@ using Microsoft.VisualBasic.CompilerServices;
 
 namespace Aoc2022.Day14
 {
-    internal static class RegolithReservoir
+    internal class RegolithReservoir: IProblem
     {
-        public static string Solve()
+        public string Name => "Regolith Reservoir";
+        public int Day => 14;
+
+        private readonly Grid grid;
+
+
+        public RegolithReservoir()
         {
-            var builder = new StringBuilder();
+            var input = File.ReadAllLines("Day14/input.txt");
 
-            builder.AppendLine("Day 14: Regolith Reservoir");
-            builder.AppendLine();
+            var rocks = new List<(Point, Point)>();
 
-            var grid = new Parser().Parse();
+            foreach (var line in input)
+                rocks.AddRange(ParseRocks(line));
 
-            builder.AppendLine("How many units of sand come to rest before sand starts flowing into the abyss below?");
-            builder.AppendLine($"{grid.Simulate(new Point(500, 0), false)}");
-            builder.AppendLine();
+            grid = new Grid(rocks);
+        }
 
-            grid.Reset();
+        public string SolvePart1()
+        {
+            return grid
+                .Simulate(new Point(500, 0), false)
+                .ToString();
+        }
 
-            builder.AppendLine("How many units of sand come to rest until the source of the sand becomes blocked?");
-            builder.AppendLine($"{grid.Simulate(new Point(500, 0), true)}");
-            builder.AppendLine();
+        public string SolvePart2()
+        {
+            return grid
+                .Simulate(new Point(500, 0), true)
+                .ToString();
+        }
 
-            return builder.ToString();
+        private IEnumerable<(Point, Point)> ParseRocks(string line)
+        {
+            var slices = line.Split("->");
+            var points = new List<Point>();
+
+            foreach (var slice in slices)
+            {
+                var coordinates = slice.Split(",").Select(e => Convert.ToInt32(e.Trim())).ToArray();
+                points.Add(new Point(coordinates[0], coordinates[1]));
+            }
+
+            for (var i = 0; i < points.Count - 1; i++)
+                yield return (points[i], points[i + 1]);
         }
     }
 }

@@ -1,47 +1,31 @@
-﻿using System.Text;
+﻿using Aoc2022.Day02;
+using System.Text;
 
 namespace Aoc2022.Day03
 {
-    internal static class RucksackReorganization
+    internal class RucksackReorganization: IProblem
     {
-        public static string Solve()
+        public string Name => "Rucksack Reorganization";
+        public int Day => 3;
+
+        private readonly List<Rucksack> rucksacks = new();
+        
+        public RucksackReorganization()
         {
-            StringBuilder builder = new StringBuilder();
+            var input = File.ReadAllLines("Day03/input.txt");
 
-            builder.AppendLine("Day 3: Rucksack Reorganization");
-            builder.AppendLine();
-
-            Parser parser = new Parser();
-
-            var rucksacks = parser
-                .Parse()
-                .ToList();
-
-            builder.AppendLine("Find the item type that appears in both compartments of each rucksack. What is the sum of the priorities of those item types?");
-            builder.AppendLine($"{rucksacks.Sum(e => CalculatePriority(e.Compartments))}");
-            builder.AppendLine();
-
-            var groups = new List<IEnumerable<Rucksack>>();
-            
-            for (int i = 0; i < rucksacks.Count(); i += 3)
-                groups.Add(rucksacks.Skip(i).Take(3).OrderBy(e => e.Contents.Length));
-
-            builder.AppendLine("Find the item type that corresponds to the badges of each three-Elf group. What is the sum of the priorities of those item types?");
-            builder.AppendLine($"{groups.Sum(e => CalculatePriority(e.Select(g => g.Contents).ToArray()))}");
-            builder.AppendLine();
-
-            return builder.ToString();
+            foreach (var line in input)
+                if (!string.IsNullOrWhiteSpace(line))
+                    rucksacks.Add(new Rucksack(line));
         }
-
-
-    private static int CalculatePriority(ICollection<string> sources)
+        private int CalculatePriority(ICollection<string> sources)
         {
             var c = FindCommonChar(sources);
 
             return ConvertPriority(c);
         }
 
-        private static int ConvertPriority(char c)
+        private int ConvertPriority(char c)
         {
             var v = c - 'A';
 
@@ -51,7 +35,7 @@ namespace Aoc2022.Day03
             return c - 'a' + 1;
         }
 
-        private static char FindCommonChar(ICollection<string> sources)
+        private char FindCommonChar(ICollection<string> sources)
         {
             foreach (var c1 in sources.First())
             {
@@ -84,6 +68,25 @@ namespace Aoc2022.Day03
             }
 
             throw new NotImplementedException();
+        }
+
+        public string SolvePart1()
+        {
+            return rucksacks
+                .Sum(e => CalculatePriority(e.Compartments))
+                .ToString();
+        }
+
+        public string SolvePart2()
+        {
+            var groups = new List<IEnumerable<Rucksack>>();
+
+            for (int i = 0; i < rucksacks.Count(); i += 3)
+                groups.Add(rucksacks.Skip(i).Take(3).OrderBy(e => e.Contents.Length));
+
+            return groups
+                .Sum(e => CalculatePriority(e.Select(g => g.Contents).ToArray()))
+                .ToString();
         }
     }
 }

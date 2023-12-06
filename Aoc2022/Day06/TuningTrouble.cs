@@ -2,30 +2,32 @@
 
 namespace Aoc2022.Day06
 {
-    internal static class TuningTrouble
+    internal class TuningTrouble: IProblem
     {
-        public static string Solve()
+
+        public string Name => "Tuning Trouble";
+        public int Day => 6;
+
+        private readonly string stream;
+
+        public TuningTrouble()
         {
-            StringBuilder builder = new StringBuilder();
-
-            builder.AppendLine("Day 6: Tuning Trouble");
-            builder.AppendLine();
-
-            var parser = new Parser();
-            var stream = parser.Parse();
-
-            builder.AppendLine("How many characters need to be processed before the first start-of-packet marker is detected?");
-            builder.AppendLine($"{FindFirstDistinctSeriesPos(stream, 4)}");
-            builder.AppendLine();
-
-            builder.AppendLine("How many characters need to be processed before the first start-of-message marker is detected?");
-            builder.AppendLine($"{FindFirstDistinctSeriesPos(stream, 14)}");
-            builder.AppendLine();
-
-            return builder.ToString();
+            stream = File.ReadAllText("Day06/input.txt");
         }
 
-        private static int FindFirstDistinctSeriesPos(string stream, int distinctCharacters)
+        public string SolvePart1()
+        {
+            return FindFirstDistinctSeriesPos(stream, 4)
+                .ToString();
+        }
+
+        public string SolvePart2()
+        {
+            return FindFirstDistinctSeriesPos(stream, 14)
+                .ToString();
+        }
+
+        private int FindFirstDistinctSeriesPos(string stream, int distinctCharacters)
         {
             var queue = new Queue<char>();
 
@@ -37,10 +39,11 @@ namespace Aoc2022.Day06
                     queue.Dequeue();
 
                 if (queue.Distinct().Count() == distinctCharacters)
-                    return i+1;
+                    return i + 1;
             }
 
             return -1;
         }
+
     }
 }

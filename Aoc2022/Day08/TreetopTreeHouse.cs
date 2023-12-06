@@ -2,27 +2,48 @@
 
 namespace Aoc2022.Day08
 {
-    internal static class TreetopTreeHouse
+    internal class TreetopTreeHouse: IProblem
     {
-        public static string Solve()
+        public string Name => "Treetop Tree House";
+        public int Day => 8;
+
+        private readonly Tree[][] trees;
+
+        public TreetopTreeHouse()
         {
-            StringBuilder builder = new StringBuilder();
+            var input = File.ReadAllLines("Day08/input.txt");
+            
+            trees = new Tree[input.Length][];
 
-            builder.AppendLine("Day 8: Treetop Tree House");
-            builder.AppendLine();
+            for (int r = 0; r < input.Length; r++)
+            {
+                trees[r] = new Tree[input[r].Length];
 
-            var parser = new Parser();
-            var trees = parser.Parse();
+                for (int c = 0; c < input[r].Length; c++)
+                {
+                    var height = Convert.ToInt32(input[r][c]);
+                    var top = r > 0 ? trees[r - 1][c] : null;
+                    var left = c > 0 ? trees[r][c - 1] : null;
 
-            builder.AppendLine("how many trees are visible from outside the grid?");
-            builder.AppendLine($"{trees.SelectMany(e => e).Count(e => e.Visible)}");
-            builder.AppendLine();
+                    trees[r][c] = new Tree(height, left, top);
+                }
+            }
+        }
 
-            builder.AppendLine("What is the highest scenic score possible for any tree?");
-            builder.AppendLine($"{trees.SelectMany(e => e).Max(e => e.ScenicScore)}");
-            builder.AppendLine();
+        public string SolvePart1()
+        {
+            return trees
+                .SelectMany(e => e)
+                .Count(e => e.Visible)
+                .ToString();
+        }
 
-            return builder.ToString();
+        public string SolvePart2()
+        {
+            return trees
+                .SelectMany(e => e)
+                .Max(e => e.ScenicScore)
+                .ToString();
         }
     }
 }

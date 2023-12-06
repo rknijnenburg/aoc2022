@@ -2,30 +2,42 @@
 
 namespace Aoc2022.Day02
 {
-    internal static class RockPaperScissors
+    internal class RockPaperScissors: IProblem
     {
-        public static string Solve()
+        private readonly string[] input;
+
+        public RockPaperScissors()
         {
-            StringBuilder builder = new StringBuilder();
-
-            builder.AppendLine("Day 2: Rock Paper Scissors");
-            builder.AppendLine();
-
-            Parser parser = new Parser();
-
-            var responseRounds = parser.ParseResponseRounds();
-            
-            builder.AppendLine("What would your total score be if everything goes exactly according to your strategy guide using the second column as the response?");
-            builder.AppendLine($"{responseRounds.Sum(e => e.Score)}");
-            builder.AppendLine();
-
-            var resultRounds = parser.ParseResultRounds();
-
-            builder.AppendLine("what would your total score be if everything goes exactly according to your strategy guide using the second column as the result?");
-            builder.AppendLine($"{resultRounds.Sum(e => e.Score)}");
-            builder.AppendLine();
-
-            return builder.ToString();
+            input = File.ReadAllLines("Day02/input.txt");
         }
+        
+        public string Name => "Rock Paper Scissors";
+        public int Day => 2;
+        public string SolvePart1()
+        {
+            var rounds = new List<ResponseRound>();
+
+            foreach (var line in input)
+                if (!string.IsNullOrWhiteSpace(line))
+                    rounds.Add(new ResponseRound(line[0], line[2]));
+
+            return rounds
+                .Sum(e => e.Score)
+                .ToString();
+        }
+
+        public string SolvePart2()
+        {
+            var rounds = new List<ResultRound>();
+
+            foreach (var line in input)
+                if (!string.IsNullOrWhiteSpace(line))
+                    rounds.Add(new ResultRound(line[0], line[2]));
+
+            return rounds
+                .Sum(e => e.Score)
+                .ToString();
+        }
+
     }
 }

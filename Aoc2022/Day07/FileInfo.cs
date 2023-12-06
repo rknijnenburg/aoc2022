@@ -1,12 +1,12 @@
 ﻿namespace Aoc2022.Day07
 {
-    internal class File
+    internal class FileInfo
     {
         public string Name { get; }
         public int Size { get; }
-        public Directory Parent { get; }
+        public DirectoryInfo Parent { get; }
 
-        public File(string name, int size, Directory parent)
+        public FileInfo(string name, int size, DirectoryInfo parent)
         {
             Name = name;
             Size = size;

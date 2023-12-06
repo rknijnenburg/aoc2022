@@ -2,38 +2,53 @@
 
 namespace Aoc2022.Day05
 {
-    internal static class SupplyStacks
+    internal class SupplyStacks: IProblem
     {
-        public static string Solve()
+        public string Name => "Supply Stacks";
+        public int Day => 5;
+
+        private readonly string[] input;
+        private readonly List<Instruction> instructions = new();
+
+        public SupplyStacks()
         {
-            StringBuilder builder = new StringBuilder();
+            input = File.ReadAllLines("Day05/input.txt");
 
-            builder.AppendLine("Day 5: Supply Stacks");
-            builder.AppendLine();
+            var lines = input.SkipWhile(e => !string.IsNullOrWhiteSpace(e));
 
-            var parser = new Parser();
-            var instructions = parser.ParseInstructions();
+            foreach (var line in lines)
+            {
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    var split = line.Split(' ');
 
-            var stacks = parser.ParseStacks();
-            
+                    var amount = Convert.ToInt32(split[1]);
+                    var source = Convert.ToInt32(split[3]);
+                    var destination = Convert.ToInt32(split[5]);
+
+                    instructions.Add(new Instruction(amount, source, destination));
+                }
+            }
+        }
+        public string SolvePart1()
+        {
+            var stacks = BuildStacks();
+
             RearrangeSingle(stacks, instructions);
 
-            builder.AppendLine("After the rearrangement procedure completes, what crate ends up on top of each stack moving single crates?");
-            builder.AppendLine($"{string.Join(string.Empty, stacks.Select(e => e.Value.Peek()))}");
-            builder.AppendLine();
-
-            stacks = parser.ParseStacks();
-
-            RearrangeRanged(stacks, parser.ParseInstructions());
-
-            builder.AppendLine("After the rearrangement procedure completes, what crate ends up on top of each stack moving multiple crates at once?");
-            builder.AppendLine($"{string.Join(string.Empty, stacks.Select(e => e.Value.Peek()))}");
-            builder.AppendLine();
-
-            return builder.ToString();
+            return string.Join(string.Empty, stacks.Select(e => e.Value.Peek()));
         }
 
-        private static void RearrangeSingle(IDictionary<int, Stack<char>> stacks, IEnumerable<Instruction> instructions)
+        public string SolvePart2()
+        {
+            var stacks = BuildStacks();
+
+            RearrangeRanged(stacks, instructions);
+
+            return string.Join(string.Empty, stacks.Select(e => e.Value.Peek()));
+        }
+
+        private void RearrangeSingle(IDictionary<int, Stack<char>> stacks, IEnumerable<Instruction> instructions)
         {
             foreach (var instruction in instructions)
                 for (int i = 0; i < instruction.Amount; i++)
@@ -41,7 +56,7 @@ namespace Aoc2022.Day05
 
         }
 
-        private static void RearrangeRanged(IDictionary<int, Stack<char>> stacks, IEnumerable<Instruction> instructions)
+        private void RearrangeRanged(IDictionary<int, Stack<char>> stacks, IEnumerable<Instruction> instructions)
         {
             foreach (var instruction in instructions)
             {
@@ -55,6 +70,41 @@ namespace Aoc2022.Day05
                 foreach (var crate in crates)
                     stacks[instruction.Destination].Push(crate);
             }
+        }
+
+        private IDictionary<int, Stack<char>> BuildStacks()
+        {
+            var result = new Dictionary<int, Stack<char>>();
+
+            Stack<char> GetStack(int number)
+            {
+                if (!result.ContainsKey(number))
+                    result.Add(number, new Stack<char>());
+
+                return result[number];
+            }
+
+            var lines = input
+                .TakeWhile(e => !string.IsNullOrEmpty(e))
+                .Reverse()
+                .Skip(1);
+
+            foreach (var line in lines)
+            {
+                var i = 1;
+
+                for (int s = 0; s < line.Length; s += 4)
+                {
+                    var entry = line.Substring(s, 3);
+
+                    if (!string.IsNullOrWhiteSpace(entry))
+                        GetStack(i).Push(entry[1]);
+
+                    i++;
+                }
+            }
+
+            return result;
         }
     }
 }

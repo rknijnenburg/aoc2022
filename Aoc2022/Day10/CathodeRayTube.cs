@@ -10,46 +10,26 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Aoc2022.Day10
 {
-    internal static class CathodeRayTube
+    internal class CathodeRayTube: IProblem
     {
-        public static string Solve()
+        public string Name => "Cathode-Ray Tube";
+        public int Day => 10;
+
+        private readonly Dictionary<int, int> history;
+
+        public CathodeRayTube()
         {
-            var builder = new StringBuilder();
+            var input = File.ReadAllLines("Day10/input.txt")
+                .Select(e => e.Trim())
+                .ToArray();
 
-            builder.AppendLine("Day 10: Cathode-Ray Tube");
-            builder.AppendLine();
-
-            var instructions = new Parser().Parse();
-            var history = BuildHistory(instructions);
-
-            builder.AppendLine("Find the signal strength during the 20th, 60th, 100th, 140th, 180th, and 220th cycles. What is the sum of these six signal strengths?");
-            builder.AppendLine($"{history.Where(e => (e.Key + 20) % 40 == 0).Sum(e => e.Key * e.Value)}");
-            builder.AppendLine();
-
-            builder.AppendLine("Render the image given by your program.What eight capital letters appear on your CRT?");
-
-            foreach (var c in history.Keys)
-            {
-                var pos = c % 40;
-
-                builder.Append(pos - 1 <= history[c] && history[c] <= pos + 1 ? '#' : '.');
-
-                if ((c + 1) % 40 == 0)
-                    builder.AppendLine();
-            }
-
-            builder.AppendLine();
-
-            return builder.ToString();
-        }
-
-        private static Dictionary<int, int> BuildHistory(IEnumerable<string> instructions)
-        {
-            var result = new Dictionary<int, int> { { 0, 0 } };
+            history = new Dictionary<int, int>();
             var x = 1;
             var c = 1;
 
-            foreach (var instruction in instructions)
+            history.Add(x, c);
+
+            foreach (var instruction in input)
             {
                 var duration = instruction.Trim() == "noop" ? 1 : 2;
 
@@ -65,13 +45,51 @@ namespace Aoc2022.Day10
                         }
                     }
 
-                    result.Add(c, x);
-
                     c++;
+
+                    history.Add(c, x);
                 }
             }
-
-            return result;
         }
-    }
+
+        public string SolvePart1()
+        {
+            return history
+                .Where(e => (e.Key + 20) % 40 == 0)
+                .Sum(e => e.Key * e.Value)
+                .ToString();
+        }
+
+        public string SolvePart2()
+        {
+            var builder = new StringBuilder();
+
+            foreach (var c in history.Keys)
+            {
+                var pos = (c - 1) % 40;
+
+                builder.Append((pos - 1) <= history[c] && history[c] <= (pos + 1) ? '#' : '.');
+
+                if (c % 40 == 0)
+                    builder.AppendLine();
+            }
+
+            builder.AppendLine();
+
+            var filename = $"output.8.txt";
+
+            try
+            {
+                File.Delete(filename);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            
+            File.WriteAllText(filename, builder.ToString());
+
+            return filename;
+        }
+}
 }

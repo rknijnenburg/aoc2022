@@ -2,31 +2,51 @@
 
 namespace Aoc2022.Day01
 {
-    internal static class CalorieCounting
+    internal class CalorieCounting: IProblem
     {
-        public static string Solve()
+        public string Name => "Calorie Counting";
+
+        public int Day => 1;
+
+        private List<Elf> elves;
+
+        public CalorieCounting()
         {
-            StringBuilder builder = new StringBuilder();
+            var input = File.ReadAllLines("Day01/input.txt");
 
-            builder.AppendLine("Day 1: Calorie Counting");
-            builder.AppendLine();
+            elves = new List<Elf>();
+            var current = new Elf();
 
-            Parser parser = new Parser();
+            foreach (var line in input)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    elves.Add(current);
+                    current = new Elf();
 
-            var elves = parser
-                .Parse()
+                    continue;
+                }
+
+                current.Calories.Add(Convert.ToInt32(line));
+            }
+        }
+
+        public string SolvePart1()
+        {
+            return elves
                 .OrderByDescending(e => e.TotalCalories)
-                .ToList();
+                .First()
+                .TotalCalories
+                .ToString();
+        }
 
-            builder.AppendLine("Find the Elf carrying the most Calories. How many total Calories is that Elf carrying?");
-            builder.AppendLine($"{elves.First().TotalCalories}");
-            builder.AppendLine();
-
-            builder.AppendLine("Find the top three Elves carrying the most Calories. How many Calories are those Elves carrying in total?");
-            builder.AppendLine($"{elves.Take(3).Sum(e => e.TotalCalories)}");
-            builder.AppendLine();
-
-            return builder.ToString();
+        public string SolvePart2()
+        {
+            return elves
+                .OrderByDescending(e => e.TotalCalories)
+                .Take(3)
+                .Sum(e => e.TotalCalories)
+                .ToString();
         }
     }
 }

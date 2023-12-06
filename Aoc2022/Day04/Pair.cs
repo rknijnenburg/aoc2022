@@ -2,35 +2,17 @@
 {
     internal class Pair
     {
-        internal class Range
-        {
-            public int Start { get; }
-            public int End { get; }
-
-            public Range(int v1, int v2)
-            {
-                Start = Math.Min(v1, v2);
-                End = Math.Max(v1, v2);
-            }
-
-            public bool Covers(Range range)
-            {
-                return range.Start >= Start && range.End <= End;
-            }
-
-            public bool Overlaps(Range range)
-            {
-                return (Start <= range.Start && range.Start <= End) || (Start <= range.End && range.End <= End);
-            }
-        }
+        
 
         public Range First { get; }
         public Range Second { get; }
 
-        public Pair(Range first, Range second)
+        public Pair(string line)
         {
-            First = first;
-            Second = second;
+            var slices = line.Split(',');
+            
+            First = new Range(slices[0]);
+            Second = new Range(slices[1]);
         }
 
         public bool Covers()
